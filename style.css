@@ -1,0 +1,479 @@
+/**
+ * Soda TTS - Stylesheet
+ * 🥤 톡톡 터지는 디자인!
+ */
+
+/* ============================================================================
+ * CSS Variables
+ * ============================================================================ */
+ 
+.soda-settings-container {
+  --soda-primary: #7c3aed;
+  --soda-primary-light: #a78bfa;
+  --soda-primary-dark: #5b21b6;
+  --soda-accent: #06b6d4;
+  --soda-accent-light: #67e8f9;
+  
+  --soda-bg: #1a1a2e;
+  --soda-bg-light: #252542;
+  --soda-bg-card: #2d2d4a;
+  
+  --soda-text: #e2e8f0;
+  --soda-text-dim: #94a3b8;
+  --soda-text-muted: #64748b;
+  
+  --soda-border: #3d3d5c;
+  --soda-border-light: #4d4d6d;
+  
+  --soda-success: #10b981;
+  --soda-warning: #f59e0b;
+  --soda-error: #ef4444;
+  
+  --soda-radius: 12px;
+  --soda-radius-sm: 8px;
+  --soda-transition: 0.2s ease;
+}
+
+/* ============================================================================
+ * Container & Header
+ * ============================================================================ */
+
+.soda-settings-container {
+  padding: 16px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: var(--soda-text);
+}
+
+.soda-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--soda-border);
+}
+
+.soda-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.soda-icon {
+  font-size: 28px;
+  animation: soda-bubble 2s ease-in-out infinite;
+}
+
+@keyframes soda-bubble {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.soda-title {
+  font-size: 20px;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--soda-primary-light), var(--soda-accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.soda-subtitle {
+  font-size: 12px;
+  color: var(--soda-text-muted);
+}
+
+/* ============================================================================
+ * Sections & Fields
+ * ============================================================================ */
+
+.soda-section {
+  margin-bottom: 16px;
+}
+
+.soda-section-divider {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--soda-border);
+}
+
+.soda-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--soda-text);
+  margin-bottom: 8px;
+}
+
+.soda-label-icon {
+  font-size: 16px;
+}
+
+.soda-desc {
+  font-size: 12px;
+  color: var(--soda-text-muted);
+  margin-top: 4px;
+}
+
+.soda-field {
+  margin-bottom: 12px;
+}
+
+.soda-field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--soda-text-dim);
+  margin-bottom: 6px;
+}
+
+.soda-field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* ============================================================================
+ * Form Elements
+ * ============================================================================ */
+
+.soda-select,
+.soda-input {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: var(--soda-text);
+  background: var(--soda-bg-light);
+  border: 1px solid var(--soda-border);
+  border-radius: var(--soda-radius-sm);
+  transition: border-color var(--soda-transition), box-shadow var(--soda-transition);
+  outline: none;
+}
+
+.soda-select:hover,
+.soda-input:hover {
+  border-color: var(--soda-border-light);
+}
+
+.soda-select:focus,
+.soda-input:focus {
+  border-color: var(--soda-primary);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+}
+
+.soda-select option {
+  background: var(--soda-bg);
+  color: var(--soda-text);
+}
+
+/* Range Slider */
+.soda-range {
+  width: 100%;
+  height: 6px;
+  background: var(--soda-bg-light);
+  border-radius: 3px;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+.soda-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  background: linear-gradient(135deg, var(--soda-primary), var(--soda-accent));
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  transition: transform var(--soda-transition);
+}
+
+.soda-range::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+
+.soda-range-val {
+  font-size: 11px;
+  color: var(--soda-accent);
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+/* ============================================================================
+ * Provider Settings Card
+ * ============================================================================ */
+
+.soda-provider-settings {
+  background: var(--soda-bg-card);
+  border: 1px solid var(--soda-border);
+  border-radius: var(--soda-radius);
+  padding: 16px;
+  margin-bottom: 16px;
+  animation: soda-fadeIn 0.3s ease;
+}
+
+@keyframes soda-fadeIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.soda-provider-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--soda-border);
+}
+
+.soda-provider-badge {
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.soda-provider-badge.qwen {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+}
+
+.soda-provider-badge.openai {
+  background: linear-gradient(135deg, #10a37f, #1a7f64);
+  color: white;
+}
+
+.soda-provider-badge.gemini {
+  background: linear-gradient(135deg, #4285f4, #34a853);
+  color: white;
+}
+
+.soda-provider-badge.lmnt {
+  background: linear-gradient(135deg, #f97316, #fb923c);
+  color: white;
+}
+
+.soda-provider-badge.elevenlabs {
+  background: linear-gradient(135deg, #000, #333);
+  color: white;
+}
+
+.soda-provider-desc {
+  font-size: 12px;
+  color: var(--soda-text-muted);
+}
+
+/* ============================================================================
+ * Warning Box
+ * ============================================================================ */
+
+.soda-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: var(--soda-radius-sm);
+  margin-bottom: 16px;
+  font-size: 12px;
+  color: var(--soda-warning);
+}
+
+.soda-warning-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.soda-warning b {
+  color: #fbbf24;
+}
+
+/* ============================================================================
+ * Buttons
+ * ============================================================================ */
+
+.soda-actions {
+  display: flex;
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.soda-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--soda-radius-sm);
+  cursor: pointer;
+  transition: all var(--soda-transition);
+}
+
+.soda-btn-primary {
+  background: linear-gradient(135deg, var(--soda-primary), var(--soda-primary-dark));
+  color: white;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+}
+
+.soda-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(124, 58, 237, 0.4);
+}
+
+.soda-btn-secondary {
+  background: var(--soda-bg-light);
+  color: var(--soda-text);
+  border: 1px solid var(--soda-border);
+}
+
+.soda-btn-secondary:hover {
+  background: var(--soda-bg-card);
+  border-color: var(--soda-border-light);
+}
+
+/* ============================================================================
+ * Status Messages
+ * ============================================================================ */
+
+.soda-status {
+  padding: 10px 14px;
+  font-size: 12px;
+  border-radius: var(--soda-radius-sm);
+  margin-bottom: 12px;
+}
+
+.soda-status-success {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: var(--soda-success);
+}
+
+.soda-status-error {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: var(--soda-error);
+}
+
+.soda-status-loading {
+  background: rgba(124, 58, 237, 0.1);
+  border: 1px solid rgba(124, 58, 237, 0.3);
+  color: var(--soda-primary-light);
+}
+
+.soda-hint {
+  display: block;
+  margin-top: 6px;
+  font-size: 11px;
+  opacity: 0.8;
+}
+
+/* ============================================================================
+ * Toggle Switch
+ * ============================================================================ */
+
+.soda-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.soda-switch {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 26px;
+}
+
+.soda-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.soda-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--soda-bg-light);
+  border: 1px solid var(--soda-border);
+  border-radius: 26px;
+  transition: var(--soda-transition);
+}
+
+.soda-slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 2px;
+  bottom: 2px;
+  background: var(--soda-text-dim);
+  border-radius: 50%;
+  transition: var(--soda-transition);
+}
+
+.soda-switch input:checked + .soda-slider {
+  background: linear-gradient(135deg, var(--soda-primary), var(--soda-accent));
+  border-color: transparent;
+}
+
+.soda-switch input:checked + .soda-slider:before {
+  transform: translateX(22px);
+  background: white;
+}
+
+.soda-sub-options {
+  margin-top: 12px;
+  padding: 12px;
+  background: var(--soda-bg-light);
+  border-radius: var(--soda-radius-sm);
+  animation: soda-fadeIn 0.3s ease;
+}
+
+/* ============================================================================
+ * Message TTS Button
+ * ============================================================================ */
+
+.soda-msg-tts-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  color: var(--soda-text-dim);
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all var(--soda-transition);
+}
+
+.soda-msg-tts-btn:hover {
+  color: var(--soda-primary-light);
+  background: rgba(124, 58, 237, 0.1);
+}
+
+.soda-msg-tts-btn.is-playing {
+  color: var(--soda-accent);
+  animation: soda-pulse 1s ease-in-out infinite;
+}
+
+@keyframes soda-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.soda-msg-tts-btn svg {
+  width: 16px;
+  height: 16px;
+}
