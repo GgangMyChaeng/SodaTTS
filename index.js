@@ -1,6 +1,5 @@
 /**
- * Soda TTS - SillyTavern Extension
- * 🥤 톡톡 터지는 TTS!
+ * 🥤 Soda TTS - SillyTavern Extension
  * 
  * 메인 진입점 (manifest.json에서 지정)
  */
