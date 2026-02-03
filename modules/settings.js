@@ -1,111 +1,234 @@
-/**
- * Soda - settings.js
- * TTS 설정 스키마/기본값/마이그레이션
- */
+<!-- Soda TTS - Settings Panel -->
+<div class="soda-settings-container">
+  
+  <!-- 헤더 -->
+  <div class="soda-header">
+    <div class="soda-logo">
+      <span class="soda-icon">🥤</span>
+      <span class="soda-title">Soda TTS</span>
+    </div>
+    <span class="soda-subtitle">톡톡 터지는 음성 합성</span>
+  </div>
 
-import { extension_settings, saveSettingsDebounced } from "./deps.js";
+  <!-- Provider 선택 -->
+  <div class="soda-section">
+    <label class="soda-label" for="soda_tts_provider">
+      <span class="soda-label-icon">🎤</span>
+      TTS Provider
+    </label>
+    <select id="soda_tts_provider" class="soda-select">
+      <option value="">🥤 Select Provider</option>
+    </select>
+  </div>
 
-/** 저장소 키 */
-export const SETTINGS_KEY = "soda_tts";
+  <!-- CORS 경고 -->
+  <div id="soda_tts_cors_warning" class="soda-warning" style="display: none;">
+    <span class="soda-warning-icon">⚠️</span>
+    <span>일부 Provider는 ST의 <b>enableCorsProxy: true</b> 설정이 필요합니다.</span>
+  </div>
 
-/**
- * 설정 초기화 및 보정
- * extension_settings에서 설정을 꺼내고, 없으면 기본값으로 "완성된 settings"를 보장
- */
-export function ensureSettings() {
-  extension_settings[SETTINGS_KEY] ??= {};
-  const s = extension_settings[SETTINGS_KEY];
+  <!-- ========== Qwen 설정 ========== -->
+  <div id="soda_tts_qwen_settings" class="soda-provider-settings" style="display: none;">
+    <div class="soda-provider-header">
+      <span class="soda-provider-badge qwen">Qwen</span>
+      <span class="soda-provider-desc">Alibaba DashScope • 저렴하고 빠름</span>
+    </div>
+    
+    <div class="soda-field-row">
+      <div class="soda-field">
+        <label for="soda_tts_qwen_model">Model</label>
+        <select id="soda_tts_qwen_model" class="soda-select">
+          <option value="qwen3-tts-flash">Qwen3-TTS-Flash (빠름)</option>
+          <option value="qwen3-tts">Qwen3-TTS (고품질)</option>
+        </select>
+      </div>
+      <div class="soda-field">
+        <label for="soda_tts_qwen_voice">Voice</label>
+        <select id="soda_tts_qwen_voice" class="soda-select"></select>
+      </div>
+    </div>
+    
+    <div class="soda-field">
+      <label for="soda_tts_qwen_apikey">API Key</label>
+      <input type="password" id="soda_tts_qwen_apikey" class="soda-input" placeholder="...">
+    </div>
+  </div>
 
-  // === 기본값 보정 ===
-  
-  // 활성화 여부
-  s.enabled ??= true;
-  
-  // 현재 선택된 프로바이더
-  s.provider ??= "";
-  
-  // 프로바이더별 설정
-  s.providers ??= {};
-  
-  // Qwen (Alibaba DashScope)
-  s.providers.qwen ??= {};
-  s.providers.qwen.apiKey ??= "";
-  s.providers.qwen.model ??= "qwen3-tts-flash";
-  s.providers.qwen.voice ??= "Cherry";
-  
-  // OpenAI
-  s.providers.openai ??= {};
-  s.providers.openai.apiKey ??= "";
-  s.providers.openai.model ??= "tts-1";
-  s.providers.openai.voice ??= "nova";
-  s.providers.openai.speed ??= 1.0;
-  s.providers.openai.instructions ??= "";
-  
-  // Gemini
-  s.providers.gemini ??= {};
-  s.providers.gemini.apiKey ??= "";
-  s.providers.gemini.model ??= "gemini-2.5-flash-preview-tts";
-  s.providers.gemini.voice ??= "Kore";
-  
-  // LMNT
-  s.providers.lmnt ??= {};
-  s.providers.lmnt.apiKey ??= "";
-  s.providers.lmnt.model ??= "lightning";
-  s.providers.lmnt.voice ??= "lily";
-  s.providers.lmnt.speed ??= 1.0;
-  
-  // ElevenLabs
-  s.providers.elevenlabs ??= {};
-  s.providers.elevenlabs.apiKey ??= "";
-  s.providers.elevenlabs.model ??= "eleven_multilingual_v2";
-  s.providers.elevenlabs.voice ??= "21m00Tcm4TlvDq8ikWAM";
-  s.providers.elevenlabs.stability ??= 0.5;
-  s.providers.elevenlabs.similarityBoost ??= 0.75;
-  
-  // 메시지 버튼 설정
-  s.msgButtonEnabled ??= false;
-  s.msgButtonReadMode ??= "dialogue"; // "dialogue" | "full"
-  
-  // 자동 재생 (향후 기능용)
-  s.autoPlay ??= false;
-  
-  // 디버그 모드
-  s.debugMode ??= false;
+  <!-- ========== OpenAI 설정 ========== -->
+  <div id="soda_tts_openai_settings" class="soda-provider-settings" style="display: none;">
+    <div class="soda-provider-header">
+      <span class="soda-provider-badge openai">OpenAI</span>
+      <span class="soda-provider-desc">안정적인 품질</span>
+    </div>
+    
+    <div class="soda-field-row">
+      <div class="soda-field">
+        <label for="soda_tts_openai_model">Model</label>
+        <select id="soda_tts_openai_model" class="soda-select">
+          <option value="tts-1">TTS-1 (빠름)</option>
+          <option value="tts-1-hd">TTS-1-HD (고품질)</option>
+          <option value="gpt-4o-mini-tts">GPT-4o-mini-TTS</option>
+        </select>
+      </div>
+      <div class="soda-field">
+        <label for="soda_tts_openai_voice">Voice</label>
+        <select id="soda_tts_openai_voice" class="soda-select"></select>
+      </div>
+    </div>
+    
+    <div class="soda-field">
+      <label for="soda_tts_openai_speed">
+        Speed <span id="soda_tts_openai_speed_val" class="soda-range-val">1.0x</span>
+      </label>
+      <input type="range" id="soda_tts_openai_speed" class="soda-range" min="0.25" max="4.0" step="0.25" value="1.0">
+    </div>
+    
+    <div class="soda-field">
+      <label for="soda_tts_openai_instructions">Instructions (선택)</label>
+      <input type="text" id="soda_tts_openai_instructions" class="soda-input" placeholder="음성 스타일 지시...">
+    </div>
+    
+    <div class="soda-field">
+      <label for="soda_tts_openai_apikey">API Key</label>
+      <input type="password" id="soda_tts_openai_apikey" class="soda-input" placeholder="...">
+    </div>
+  </div>
 
-  return s;
-}
+  <!-- ========== Gemini 설정 ========== -->
+  <div id="soda_tts_gemini_settings" class="soda-provider-settings" style="display: none;">
+    <div class="soda-provider-header">
+      <span class="soda-provider-badge gemini">Gemini</span>
+      <span class="soda-provider-desc">Google • 무료 티어 가능</span>
+    </div>
+    
+    <div class="soda-field-row">
+      <div class="soda-field">
+        <label for="soda_tts_gemini_model">Model</label>
+        <select id="soda_tts_gemini_model" class="soda-select">
+          <option value="gemini-2.5-flash-preview-tts">Gemini 2.5 Flash TTS</option>
+        </select>
+      </div>
+      <div class="soda-field">
+        <label for="soda_tts_gemini_voice">Voice</label>
+        <select id="soda_tts_gemini_voice" class="soda-select"></select>
+      </div>
+    </div>
+    
+    <div class="soda-field">
+      <label for="soda_tts_gemini_apikey">API Key</label>
+      <input type="password" id="soda_tts_gemini_apikey" class="soda-input" placeholder="...">
+    </div>
+  </div>
 
-/**
- * 설정 저장 (debounced)
- */
-export function saveSettings() {
-  try {
-    saveSettingsDebounced?.();
-  } catch (e) {
-    console.warn("[Soda] Failed to save settings:", e);
-  }
-}
+  <!-- ========== LMNT 설정 ========== -->
+  <div id="soda_tts_lmnt_settings" class="soda-provider-settings" style="display: none;">
+    <div class="soda-provider-header">
+      <span class="soda-provider-badge lmnt">LMNT</span>
+      <span class="soda-provider-desc">감정 표현 우수 • 저렴</span>
+    </div>
+    
+    <div class="soda-field-row">
+      <div class="soda-field">
+        <label for="soda_tts_lmnt_model">Model</label>
+        <select id="soda_tts_lmnt_model" class="soda-select">
+          <option value="blizzard">Blizzard (기본)</option>
+          <option value="lightning">Lightning (빠름)</option>
+        </select>
+      </div>
+      <div class="soda-field">
+        <label for="soda_tts_lmnt_voice">Voice</label>
+        <select id="soda_tts_lmnt_voice" class="soda-select"></select>
+      </div>
+    </div>
+    
+    <div class="soda-field">
+      <label for="soda_tts_lmnt_speed">
+        Speed <span id="soda_tts_lmnt_speed_val" class="soda-range-val">1.0x</span>
+      </label>
+      <input type="range" id="soda_tts_lmnt_speed" class="soda-range" min="0.5" max="2.0" step="0.1" value="1.0">
+    </div>
+    
+    <div class="soda-field">
+      <label for="soda_tts_lmnt_apikey">API Key</label>
+      <input type="password" id="soda_tts_lmnt_apikey" class="soda-input" placeholder="...">
+    </div>
+  </div>
 
-/**
- * 현재 선택된 프로바이더의 설정 가져오기
- */
-export function getCurrentProviderSettings() {
-  const s = ensureSettings();
-  const providerId = s.provider;
-  if (!providerId) return null;
-  return s.providers[providerId] || null;
-}
+  <!-- ========== ElevenLabs 설정 ========== -->
+  <div id="soda_tts_elevenlabs_settings" class="soda-provider-settings" style="display: none;">
+    <div class="soda-provider-header">
+      <span class="soda-provider-badge elevenlabs">ElevenLabs</span>
+      <span class="soda-provider-desc">최고 품질 • 다양한 보이스</span>
+    </div>
+    
+    <div class="soda-field-row">
+      <div class="soda-field">
+        <label for="soda_tts_elevenlabs_model">Model</label>
+        <select id="soda_tts_elevenlabs_model" class="soda-select"></select>
+      </div>
+      <div class="soda-field">
+        <label for="soda_tts_elevenlabs_voice">Voice</label>
+        <select id="soda_tts_elevenlabs_voice" class="soda-select"></select>
+      </div>
+    </div>
+    
+    <div class="soda-field-row">
+      <div class="soda-field">
+        <label for="soda_tts_elevenlabs_stability">
+          Stability <span id="soda_tts_elevenlabs_stability_val" class="soda-range-val">0.5</span>
+        </label>
+        <input type="range" id="soda_tts_elevenlabs_stability" class="soda-range" min="0" max="1" step="0.05" value="0.5">
+      </div>
+      <div class="soda-field">
+        <label for="soda_tts_elevenlabs_similarity">
+          Similarity <span id="soda_tts_elevenlabs_similarity_val" class="soda-range-val">0.75</span>
+        </label>
+        <input type="range" id="soda_tts_elevenlabs_similarity" class="soda-range" min="0" max="1" step="0.05" value="0.75">
+      </div>
+    </div>
+    
+    <div class="soda-field">
+      <label for="soda_tts_elevenlabs_apikey">API Key</label>
+      <input type="password" id="soda_tts_elevenlabs_apikey" class="soda-input" placeholder="...">
+    </div>
+  </div>
 
-/**
- * 프로바이더 설정 업데이트
- * @param {string} providerId - 프로바이더 ID
- * @param {object} updates - 업데이트할 설정 객체
- */
-export function updateProviderSettings(providerId, updates) {
-  const s = ensureSettings();
-  if (!s.providers[providerId]) {
-    s.providers[providerId] = {};
-  }
-  Object.assign(s.providers[providerId], updates);
-  saveSettings();
-}
+  <!-- ========== 공통 액션 버튼 ========== -->
+  <div id="soda_tts_common_actions" class="soda-actions" style="display: none;">
+    <button id="soda_tts_test_btn" class="soda-btn soda-btn-primary">
+      <span>🔊</span> 테스트
+    </button>
+    <button id="soda_tts_download_btn" class="soda-btn soda-btn-secondary">
+      <span>💾</span> 다운로드
+    </button>
+  </div>
+  
+  <div id="soda_tts_test_result" class="soda-status" style="display: none;"></div>
+  <div id="soda_tts_download_status" class="soda-status" style="display: none;"></div>
+
+  <!-- ========== 메시지 버튼 설정 ========== -->
+  <div class="soda-section soda-section-divider">
+    <div class="soda-toggle-row">
+      <label class="soda-label" for="soda_tts_msg_button_toggle">
+        <span class="soda-label-icon">💬</span>
+        메시지 TTS 버튼
+      </label>
+      <label class="soda-switch">
+        <input type="checkbox" id="soda_tts_msg_button_toggle">
+        <span class="soda-slider"></span>
+      </label>
+    </div>
+    <p class="soda-desc">AI 메시지에 🔊 버튼을 추가합니다.</p>
+  </div>
+
+  <div id="soda_tts_msg_button_options" class="soda-sub-options" style="display: none;">
+    <div class="soda-field">
+      <label for="soda_tts_msg_read_mode">읽기 모드</label>
+      <select id="soda_tts_msg_read_mode" class="soda-select">
+        <option value="dialogue">대사만 읽기 ("..." 안의 텍스트)</option>
+        <option value="full">전체 읽기</option>
+      </select>
+    </div>
+  </div>
+
+</div>
