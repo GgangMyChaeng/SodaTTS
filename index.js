@@ -15,85 +15,158 @@ import { initMessageButtons } from "./modules/ui_message_button.js";
 
 const EXTENSION_NAME = "SodaTTS";
 const LOG_PREFIX = "[Soda]";
+const WAND_MENU_ID = "soda-wand-item";
+const FLOATING_PANEL_ID = "soda_floating_panel";
+
+/* ============================================================================
+ * 플로팅 패널 관리
+ * ============================================================================ */
+
+let floatingPanelHtml = null;
+let panelInitialized = false;
+
+/**
+ * 플로팅 패널 열기
+ */
+function openFloatingPanel() {
+  let overlay = document.getElementById(FLOATING_PANEL_ID);
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = FLOATING_PANEL_ID;
+    overlay.className = 'soda-floating-overlay';
+    overlay.innerHTML = `
+      <div class="soda-floating-panel">
+        <div class="soda-floating-header">
+          <span>🥤 Soda TTS</span>
+          <button class="soda-floating-close" title="닫기">✕</button>
+        </div>
+        <div class="soda-floating-content">
+          ${floatingPanelHtml || '<p>로딩 중...</p>'}
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    // 닫기 버튼
+    overlay.querySelector('.soda-floating-close').onclick = () => {
+      overlay.style.display = 'none';
+    };
+    // 오버레이 배경 클릭해도 닫기
+    overlay.onclick = (e) => {
+      if (e.target === overlay) {
+        overlay.style.display = 'none';
+      }
+    };
+    // 패널 초기화 (한 번만)
+    if (!panelInitialized && floatingPanelHtml) {
+      const content = overlay.querySelector('.soda-floating-content');
+      initSettingsPanel(content);
+      panelInitialized = true;
+    }
+  }
+  overlay.style.display = 'flex';
+}
+
+/**
+ * 드래그 기능
+ */
+function makeDraggable(element, handle) {
+  let offsetX = 0, offsetY = 0, startX = 0, startY = 0;
+  handle.style.cursor = 'move';
+  handle.onmousedown = dragStart;
+
+  function dragStart(e) {
+    e.preventDefault();
+    startX = e.clientX;
+    startY = e.clientY;
+    document.onmouseup = dragEnd;
+    document.onmousemove = dragMove;
+  }
+  
+  function dragMove(e) {
+    e.preventDefault();
+    offsetX = startX - e.clientX;
+    offsetY = startY - e.clientY;
+    startX = e.clientX;
+    startY = e.clientY;
+    element.style.top = (element.offsetTop - offsetY) + 'px';
+    element.style.left = (element.offsetLeft - offsetX) + 'px';
+    element.style.right = 'auto';
+    element.style.bottom = 'auto';
+  }
+  
+  function dragEnd() {
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
+}
+
+/* ============================================================================
+ * 마법봉 메뉴 버튼
+ * ============================================================================ */
+
+function addWandMenuButton() {
+  if (document.getElementById(WAND_MENU_ID)) return;
+  const menu = document.getElementById("extensionsMenu");
+  if (!menu) {
+    if ((addWandMenuButton._retry ?? 0) < 10) {
+      addWandMenuButton._retry = (addWandMenuButton._retry ?? 0) + 1;
+      setTimeout(addWandMenuButton, 1000);
+    }
+    return;
+  }
+  const item = document.createElement("div");
+  item.id = WAND_MENU_ID;
+  item.className = "list-group-item flex-container flexGap5 interactable";
+  item.innerHTML = `<i class="fa-solid fa-volume-high extensionsMenuExtensionButton"></i> Soda TTS`;
+  item.onclick = () => {
+    openFloatingPanel();
+    menu.style.display = "none";
+  };
+  menu.appendChild(item);
+  console.log(`${LOG_PREFIX} Wand menu button added`);
+}
 
 /* ============================================================================
  * 확장 초기화
  * ============================================================================ */
 
-/**
- * 메인 초기화 함수
- */
 async function init() {
   console.log(`${LOG_PREFIX} 🥤 Initializing...`);
-
   try {
     // 1) ST 의존성 resolve
     await __sodaResolveDeps();
     console.log(`${LOG_PREFIX} Dependencies resolved`);
-
     // 2) 설정 초기화
     const settings = ensureSettings();
     console.log(`${LOG_PREFIX} Settings loaded:`, settings.provider || "(no provider)");
-
-    // 3) 설정 패널 HTML 로드 및 Extensions 메뉴에 삽입
-    await loadSettingsPanel();
-
-    // 4) 메시지 버튼 초기화
+    // 3) 설정 패널 HTML 로드 (캐시만)
+    await loadSettingsPanelHtml();
+    // 4) 마법봉 메뉴 버튼 추가
+    addWandMenuButton();
+    // 5) 메시지 버튼 초기화
     initMessageButtons();
-
     console.log(`${LOG_PREFIX} 🥤 Ready!`);
-
   } catch (e) {
     console.error(`${LOG_PREFIX} Initialization failed:`, e);
   }
 }
 
 /**
- * 설정 패널 HTML 로드 및 삽입
+ * 설정 패널 HTML 로드 (캐시만, 삽입은 나중에)
  */
-async function loadSettingsPanel() {
-  // 확장 경로 계산
+async function loadSettingsPanelHtml() {
   const scriptUrl = import.meta.url;
   const extensionPath = scriptUrl.substring(0, scriptUrl.lastIndexOf('/'));
-
   try {
-    // settings.html 로드
     const response = await fetch(`${extensionPath}/templates/settings.html`);
     if (!response.ok) {
       throw new Error(`Failed to load settings.html: ${response.status}`);
     }
-    const html = await response.text();
-
-    // 컨테이너 생성
-    const container = document.createElement('div');
-    container.id = 'soda_extension_container';
-    container.innerHTML = html;
-
-    // ST Extensions 영역에 삽입
-    const extensionsMenu = document.querySelector('#extensions_settings');
-    if (extensionsMenu) {
-      extensionsMenu.appendChild(container);
-      console.log(`${LOG_PREFIX} Settings panel injected`);
-      
-      // 패널 초기화
-      initSettingsPanel(container);
-    } else {
-      // Extensions 메뉴가 아직 없으면 대기 후 재시도
-      console.warn(`${LOG_PREFIX} Extensions menu not found, retrying...`);
-      setTimeout(async () => {
-        const retryMenu = document.querySelector('#extensions_settings');
-        if (retryMenu) {
-          retryMenu.appendChild(container);
-          initSettingsPanel(container);
-          console.log(`${LOG_PREFIX} Settings panel injected (retry)`);
-        } else {
-          console.error(`${LOG_PREFIX} Extensions menu not found after retry`);
-        }
-      }, 2000);
-    }
-
+    floatingPanelHtml = await response.text();
+    console.log(`${LOG_PREFIX} Settings HTML loaded`);
   } catch (e) {
-    console.error(`${LOG_PREFIX} Failed to load settings panel:`, e);
+    console.error(`${LOG_PREFIX} Failed to load settings HTML:`, e);
+    floatingPanelHtml = '<p style="color: red;">설정 로드 실패</p>';
   }
 }
 
@@ -101,13 +174,11 @@ async function loadSettingsPanel() {
  * jQuery Ready (ST 방식)
  * ============================================================================ */
 
-// ST는 jQuery 사용
 if (typeof jQuery !== 'undefined') {
   jQuery(async () => {
     await init();
   });
 } else {
-  // jQuery 없으면 DOMContentLoaded
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
