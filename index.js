@@ -119,7 +119,7 @@ function makeDraggable(element, handle) {
  * ============================================================================ */
 
 function addWandMenuButton() {
-  if (document.getElementById(WAND_MENU_ID)) return;
+  if (document.getElementById(WAND_SODA)) return;
   const menu = document.getElementById("extensionsMenu");
   if (!menu) {
     if ((addWandMenuButton._retry ?? 0) < 10) {
@@ -129,7 +129,7 @@ function addWandMenuButton() {
     return;
   }
   const item = document.createElement("div");
-  item.id = WAND_MENU_ID;
+  item.id = WAND_SODA;
   item.className = "list-group-item flex-container flexGap5 interactable";
   item.innerHTML = `<i class="fa-solid fa-volume-high extensionsMenuExtensionButton"></i> Soda TTS`;
   item.onclick = () => {
