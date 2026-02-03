@@ -1,7 +1,88 @@
 /**
- * Soda TTS - Stylesheet
- * 🥤 톡톡 터지는 디자인!
+ * 🥤 Soda TTS - Stylesheet
  */
+
+
+
+ /* ============================================================================
+ * Floating Panel (마법봉 메뉴용)
+ * ============================================================================ */
+
+/* 오버레이 (배경 딤) */
+.soda-floating-overlay {
+  display: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  padding-top: calc(12px + env(safe-area-inset-top));
+  padding-bottom: calc(12px + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* 패널 박스 */
+.soda-floating-panel {
+  width: min(440px, calc(100vw - 24px));
+  max-height: min(75dvh, 600px);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+  background: var(--soda-bg, #1a1a2e);
+  border: 1px solid var(--soda-border, #3d3d5c);
+  display: flex;
+  flex-direction: column;
+}
+
+.soda-floating-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: linear-gradient(135deg, var(--soda-primary, #7c3aed), var(--soda-primary-dark, #5b21b6));
+  color: white;
+  font-weight: 700;
+  font-size: 15px;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.soda-floating-close {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.soda-floating-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.soda-floating-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* 플로팅 패널 내부에서 settings-container 스타일 조정 */
+.soda-floating-content .soda-settings-container {
+  border-radius: 0;
+}
+
 
 /* ============================================================================
  * CSS Variables
